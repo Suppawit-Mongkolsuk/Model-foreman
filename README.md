@@ -106,6 +106,45 @@ BLOCKED → หยุดถามคุณ
 - รีวิวครบ 4 ครั้งแล้วยังไม่ผ่าน หรือ Opus ก็ยังไม่ผ่าน
 - task มากกว่าครึ่งถูกยกระดับ (มักแปลว่า spec หรือ rubric มีปัญหา)
 
+## ความปลอดภัย: คำสั่งที่ต้องขออนุญาตเสมอ
+
+plugin มี guard hook ที่บังคับให้ Claude Code ถามคุณก่อนทุกครั้ง **แม้คำสั่งนั้นจะอยู่ใน allow list** และมีผลกับ worker ทุกตัวด้วย
+
+| ประเภท | ตัวอย่าง |
+|---|---|
+| ลบไฟล์ | `rm -rf`, `git clean -f`, `git checkout -- .` |
+| ทิ้งงาน / แก้ประวัติ | `git reset --hard`, `git branch -D` |
+| ส่งออกนอกเครื่อง | `git push`, `npm publish`, deploy, `terraform apply`, `kubectl apply/delete` |
+| ฐานข้อมูล | `DROP TABLE`, `TRUNCATE`, `DELETE FROM`, migration |
+| สิทธิ์ระบบ | `sudo`, `chmod -R`, `chown -R` |
+| สคริปต์จากเน็ต | `curl ... \| bash` |
+| ไฟล์ลับ | แก้ `.env`, ไฟล์ใน `.git/`, ไฟล์ `.pem` `.key` |
+
+คำสั่งทั่วไป เช่น `npm test` หรือ `rm` ไฟล์เดียว ยังรันตาม allow list ได้ปกติ
+
+### เพิ่มคำสั่งที่ต้องถามเอง
+
+ใส่กฎ `ask` ใน `.claude/settings.json` ของโปรเจกต์ กฎ `ask` ชนะ `allow` เสมอ
+
+```json
+{
+  "permissions": {
+    "allow": ["Edit", "Write", "Bash(npm test)"],
+    "ask": ["Bash(docker compose down *)", "Bash(./scripts/reset-db.sh)"]
+  }
+}
+```
+
+ถ้าอยากห้ามเด็ดขาด ไม่ให้แม้แต่ถาม ให้ใส่ใน `"deny"` แทน
+
+### ปิด guard
+
+guard ทำงานทุกเซสชันที่เปิด plugin ไว้ ไม่ว่าจะเปิดโหมด Foreman หรือไม่ ถ้าอยากปิด ให้ตั้ง environment variable `MODEL_FOREMAN_GUARD=off` ก่อนเปิด Claude Code
+
+### ข้อจำกัดของ guard
+
+guard ดูจากข้อความของคำสั่ง จึงจับรูปแบบที่ใช้กันทั่วไปได้ แต่ไม่ใช่กำแพงกันได้ทุกทาง เช่น ถ้าคำสั่งอันตรายถูกซ่อนไว้ในสคริปต์อื่นแล้วเรียกสคริปต์นั้น guard จะมองไม่เห็น ถ้างานสำคัญมาก ให้รันใน container หรือ VM ด้วย
+
 ## ปรับแต่ง
 
 - **เกณฑ์ความยาก** — fork repo นี้แล้วแก้ `skills/start/rubric.md` ช่วงคะแนนที่ให้มาเป็นจุดเริ่มต้น ไม่ใช่ค่าที่พิสูจน์แล้ว
@@ -135,4 +174,7 @@ agents/
 └─ reviewer.md        ตัวรีวิว (Opus)
 output-styles/
 └─ foreman.md         โหมด Foreman
+hooks/
+├─ hooks.json         ลงทะเบียน guard
+└─ guard.sh           ตรวจคำสั่งอันตราย
 ```
