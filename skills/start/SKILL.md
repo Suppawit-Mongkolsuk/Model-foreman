@@ -1,5 +1,5 @@
 ---
-name: model-foreman
+name: start
 description: ผู้จัดการงาน — เคลียร์ requirement กับผู้ใช้จนได้ spec แล้วแตกงานส่งให้ Haiku/Sonnet/Opus ตามความยาก พร้อมรีวิวและยกระดับโมเดลเพื่อลดค่าใช้จ่าย ใช้เมื่อผู้ใช้สั่งให้แบ่งงาน route งาน หรือให้ requirement งานที่มีหลายส่วน (task routing, orchestrate, delegate to cheaper models)
 ---
 
@@ -27,7 +27,7 @@ session หลักคือผู้จัดการ ทำหน้าท�
 
 ## ขั้นที่ 3 — ให้คะแนนและเลือกโมเดล
 
-อ่าน `rubric.md` ในโฟลเดอร์เดียวกัน ให้คะแนนทุก task ตามเกณฑ์ แล้วใช้กฎบังคับ
+อ่าน `${CLAUDE_PLUGIN_ROOT}/skills/start/rubric.md` ให้คะแนนทุก task ตามเกณฑ์ แล้วใช้กฎบังคับ
 แสดงตารางคะแนนให้ผู้ใช้เห็นตอนเริ่ม (ไม่ต้องรอยืนยัน เว้นแต่มีกฎบังคับให้หยุด)
 
 ## ขั้นที่ 4 — ผูก skill กับ task
@@ -38,7 +38,7 @@ session หลักคือผู้จัดการ ทำหน้าท�
 
 ## ขั้นที่ 5 — ส่งงานให้ worker
 
-เรียก agent `worker` และระบุ model ตามที่ได้จากขั้นที่ 3
+เรียก agent `model-foreman:worker` และระบุ model ตามที่ได้จากขั้นที่ 3
 task ที่ไม่ขึ้นต่อกันให้เรียกพร้อมกันในข้อความเดียว
 
 brief ที่ส่งต้องมีครบทุกช่อง เพราะ worker เห็นแค่ brief ไม่เห็นบทสนทนา:
@@ -55,11 +55,11 @@ FEEDBACK รอบก่อน: <ข้อความจาก reviewer หร�
 ```
 
 ถ้า Claude Code เวอร์ชันที่ใช้ไม่รองรับการส่ง model ตอนเรียก agent
-ให้สร้าง worker แยกสามไฟล์ (`worker-haiku`, `worker-sonnet`, `worker-opus`) ที่ต่างกันแค่ `model:` แล้วเรียกตัวที่ตรงกับคะแนน
+ให้แจ้งผู้ใช้ว่า plugin นี้ต้องการ Claude Code เวอร์ชันที่ส่ง model ให้ agent ได้ แล้วเรียก `model-foreman:worker` ตามปกติ (จะใช้โมเดลเริ่มต้น)
 
 ## ขั้นที่ 6 — รีวิว
 
-เรียก agent `reviewer` (Opus, context ใหม่) โดยส่งให้แค่
+เรียก agent `model-foreman:reviewer` (Opus, context ใหม่) โดยส่งให้แค่
 - brief ของ task
 - รายงานจาก worker
 - ชื่อ skill ที่ task นี้ต้องใช้

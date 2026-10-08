@@ -35,40 +35,68 @@ BLOCKED → หยุดถามคุณ
 
 ## ติดตั้ง
 
-### แบบใช้เฉพาะโปรเจกต์
+พิมพ์สองคำสั่งนี้ใน Claude Code
 
-```bash
-git clone https://github.com/Suppawit-Mongkolsuk/Model-foreman.git model-foreman
-cp -r model-foreman/.claude/skills/model-foreman  <your-project>/.claude/skills/
-cp model-foreman/.claude/agents/worker.md model-foreman/.claude/agents/reviewer.md  <your-project>/.claude/agents/
+```
+/plugin marketplace add Suppawit-Mongkolsuk/Model-foreman
+/plugin install model-foreman@model-foreman
 ```
 
-### แบบใช้ทุกโปรเจกต์ในเครื่อง
+จากนั้นรัน `/reload-plugins` หรือเปิด Claude Code ใหม่
 
-```bash
-git clone https://github.com/Suppawit-Mongkolsuk/Model-foreman.git model-foreman
-mkdir -p ~/.claude/skills ~/.claude/agents
-cp -r model-foreman/.claude/skills/model-foreman  ~/.claude/skills/
-cp model-foreman/.claude/agents/worker.md model-foreman/.claude/agents/reviewer.md  ~/.claude/agents/
+### อัปเดตเป็นเวอร์ชันล่าสุด
+
+```
+/plugin marketplace update model-foreman
 ```
 
-เปิด Claude Code ใหม่หลังติดตั้ง แล้วตรวจว่า skill และ agent ขึ้นในรายชื่อ
+### ถอนการติดตั้ง
+
+```
+/plugin uninstall model-foreman@model-foreman
+```
 
 ## ตั้งค่าก่อนใช้
 
 1. **รัน session หลักด้วย Opus** — skill เปลี่ยนโมเดลของ session หลักเองไม่ได้ ใช้ `/model opus` ก่อนเริ่ม
 2. **ให้สิทธิ์แก้ไฟล์และรัน test โดยไม่ต้องถาม** — ไม่อย่างนั้นระบบจะหยุดรอคุณทุกขั้น ตั้งได้ใน settings ของโปรเจกต์ จำกัดเฉพาะคำสั่งที่จำเป็น เช่นคำสั่ง test ของคุณ
-3. **ถ้า Claude Code ของคุณส่ง model ตอนเรียก agent ไม่ได้** — คัดลอก `worker.md` เป็น `worker-haiku.md`, `worker-sonnet.md`, `worker-opus.md` แล้วเพิ่ม `model: haiku` / `sonnet` / `opus` ในส่วนหัวของแต่ละไฟล์ (เปลี่ยน `name:` ให้ตรงชื่อไฟล์ด้วย)
 
 ## วิธีใช้
 
-พิมพ์ในเซสชันว่าให้ใช้ model-foreman แล้วตามด้วยโจทย์ เช่น
+### แบบโหมด (แนะนำ)
+
+เปิดโหมด Foreman ครั้งเดียว แล้วสั่งงานเป็นประโยคธรรมดาได้เลย ไม่ต้องพิมพ์คำสั่งนำหน้า
 
 ```
-ใช้ model-foreman: เพิ่มหน้า login ที่รองรับ 2FA และแก้ปุ่มในหน้า settings ให้ตรงดีไซน์ใหม่
+/model-foreman:on
 ```
 
-ระบบจะถามกลับจนได้ spec แล้วรอให้คุณยืนยันก่อนเริ่มทำงาน
+ครั้งแรก Claude Code จะขออนุญาตแก้ไฟล์ `.claude/settings.local.json` ให้กดอนุญาต
+โหมดนี้ค้างไว้ในโปรเจกต์นั้นจนกว่าจะปิด เปิด Claude Code ใหม่ก็ยังอยู่
+
+```
+เพิ่มหน้า login ที่รองรับ 2FA และแก้ปุ่มในหน้า settings ให้ตรงดีไซน์ใหม่
+```
+
+คำถามทั่วไป การอ่านโค้ด หรืองานแก้เล็กมาก ๆ จะตอบหรือทำทันทีโดยไม่ผ่าน flow
+
+ปิดโหมด
+
+```
+/model-foreman:off
+```
+
+ถ้าอยากเปิดโหมดนี้ทุกโปรเจกต์ ใส่ `"outputStyle": "model-foreman:Foreman"` ใน `~/.claude/settings.json`
+
+### แบบสั่งทีละครั้ง
+
+ถ้าไม่ได้เปิดโหมด ใช้คำสั่งนี้นำหน้างาน
+
+```
+/model-foreman:start เพิ่มหน้า login ที่รองรับ 2FA
+```
+
+ทั้งสองแบบ ระบบจะถามกลับจนได้ spec แล้วรอให้คุณยืนยันก่อนเริ่มทำงาน
 
 ## ระบบจะหยุดถามคุณเมื่อ
 
@@ -80,7 +108,7 @@ cp model-foreman/.claude/agents/worker.md model-foreman/.claude/agents/reviewer.
 
 ## ปรับแต่ง
 
-- **เกณฑ์ความยาก** — แก้ใน `.claude/skills/model-foreman/rubric.md` ช่วงคะแนนที่ให้มาเป็นจุดเริ่มต้น ไม่ใช่ค่าที่พิสูจน์แล้ว
+- **เกณฑ์ความยาก** — fork repo นี้แล้วแก้ `skills/start/rubric.md` ช่วงคะแนนที่ให้มาเป็นจุดเริ่มต้น ไม่ใช่ค่าที่พิสูจน์แล้ว
 - **ดูผลการตัดสินใจ** — ทุก task ถูกบันทึกลง `.claude/router-log.md` ในโปรเจกต์ ถ้าคะแนนช่วงไหนโดนตีกลับบ่อย ให้ขยับเส้นแบ่งใน rubric
 - **skill ของคุณเอง** — ระบบจะผูก skill ที่เกี่ยวข้อง (เช่น skill ด้าน UI) ไว้ใน brief ให้ worker และ reviewer โหลดใช้ ตั้ง description ของ skill ให้ชัดเพื่อให้ถูกเลือก
 
@@ -93,11 +121,18 @@ cp model-foreman/.claude/agents/worker.md model-foreman/.claude/agents/reviewer.
 ## โครงสร้าง
 
 ```
-.claude/
-├─ skills/model-foreman/
-│  ├─ SKILL.md     ขั้นตอนทั้งหมด
-│  └─ rubric.md    เกณฑ์ให้คะแนนและกฎบังคับ
-└─ agents/
-   ├─ worker.md    ตัวทำงาน
-   └─ reviewer.md  ตัวรีวิว (Opus)
+.claude-plugin/
+├─ plugin.json        ข้อมูล plugin
+└─ marketplace.json   ทำให้ repo นี้ติดตั้งผ่าน /plugin ได้
+skills/
+├─ start/
+│  ├─ SKILL.md        ขั้นตอนทั้งหมด
+│  └─ rubric.md       เกณฑ์ให้คะแนนและกฎบังคับ
+├─ on/SKILL.md        เปิดโหมด Foreman
+└─ off/SKILL.md       ปิดโหมด Foreman
+agents/
+├─ worker.md          ตัวทำงาน
+└─ reviewer.md        ตัวรีวิว (Opus)
+output-styles/
+└─ foreman.md         โหมด Foreman
 ```

@@ -1,0 +1,12 @@
+{
+  "name": "model-foreman",
+  "description": "Marketplace สำหรับ plugin model-foreman",
+  "owner": { "name": "Suppawit-Mongkolsuk" },
+  "plugins": [
+    {
+      "name": "model-foreman",
+      "source": "./",
+      "description": "ผู้จัดการงานที่แตกงานส่งให้ Haiku, Sonnet หรือ Opus ตามความยาก"
+    }
+  ]
+}

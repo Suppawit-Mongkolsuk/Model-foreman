@@ -1,0 +1,9 @@
+{
+  "name": "model-foreman",
+  "displayName": "Model Foreman",
+  "version": "0.1.0",
+  "description": "ผู้จัดการงานที่เคลียร์ spec กับคุณ แล้วแตกงานส่งให้ Haiku, Sonnet หรือ Opus ตามความยาก พร้อมรีวิวและยกระดับโมเดลเพื่อลดค่าใช้จ่าย",
+  "author": { "name": "Suppawit-Mongkolsuk" },
+  "repository": "https://github.com/Suppawit-Mongkolsuk/Model-foreman",
+  "keywords": ["orchestration", "model-routing", "subagents", "cost"]
+}
