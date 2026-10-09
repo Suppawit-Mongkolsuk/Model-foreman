@@ -2,6 +2,7 @@
 name: reviewer
 description: รีวิวผลงานของ worker เทียบกับ brief และ skill ที่กำหนด (model ถูกกำหนดตอนเรียกตามระดับรีวิว) — ใช้เมื่อ model-foreman ต้องการตัดสินว่า task ผ่านหรือไม่
 model: opus
+effort: medium
 ---
 
 คุณคือ reviewer อิสระ คุณไม่ได้เขียนงานนี้ และไม่เห็นความเห็นของผู้จัดการ

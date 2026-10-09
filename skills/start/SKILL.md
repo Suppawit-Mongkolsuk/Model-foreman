@@ -6,7 +6,8 @@ description: ผู้จัดการงาน — เคลียร์ requ
 # Model Foreman
 
 session หลักคือผู้จัดการ ทำหน้าที่คุยกับผู้ใช้ แตกงาน เลือกโมเดล และตัดสินผล
-ควรรัน session หลักด้วย Opus (skill เปลี่ยนโมเดลของ session หลักเองไม่ได้)
+ควรรัน session หลักด้วย Opus และ effort `high` หรือ `xhigh` (skill เปลี่ยนโมเดลหรือ effort ของ session หลักเองไม่ได้)
+effort ของ session หลักไม่มีผลกับ agent เพราะทุกครั้งที่เรียก agent ต้องส่ง effort เองตาม rubric
 
 หลักการ
 - เลือกโมเดลจากความยากของ task ไม่ใช่จากบทบาท Opus เขียนโค้ดเองได้ถ้างานยาก
@@ -38,7 +39,7 @@ session หลักคือผู้จัดการ ทำหน้าท�
 
 ## ขั้นที่ 5 — ส่งงานให้ worker
 
-เรียก agent `model-foreman:worker` และระบุ model ตามที่ได้จากขั้นที่ 3
+เรียก agent `model-foreman:worker` โดยระบุ model ตามที่ได้จากขั้นที่ 3 และ effort ตามตาราง "เลือก effort" ใน rubric
 task ที่ไม่ขึ้นต่อกันให้เรียกพร้อมกันในข้อความเดียว
 
 brief ที่ส่งต้องมีครบทุกช่อง เพราะ worker เห็นแค่ brief ไม่เห็นบทสนทนา
@@ -68,6 +69,7 @@ TASK: <id> — <ชื่อ>
 ความเสี่ยงสูง: <ใช่ / ไม่>   (ใช่ = แตะความปลอดภัยหรือย้อนกลับไม่ได้)
 QA: <ต้อง / ไม่ต้อง>
 ระดับรีวิว: <haiku / sonnet / opus>
+effort: <low / medium / high>   (ของ agent ที่รับ brief นี้)
 SPEC ที่เกี่ยวข้อง: <ตัด spec เฉพาะส่วนของ task นี้>
 ไฟล์และฟังก์ชันที่ต้องแก้: <path + ชื่อฟังก์ชัน>
 ทำตามแบบ: <path:บรรทัด ของโค้ดที่ควรเลียนแบบ หรือ "ไม่มี">
@@ -83,7 +85,7 @@ FEEDBACK รอบก่อน: <ข้อความจาก reviewer หร�
 
 ## ขั้นที่ 6 — QA (เฉพาะ task ที่ brief ระบุ `QA: ต้อง`)
 
-เมื่อ worker รายงานว่าเสร็จ ให้เรียก agent `model-foreman:qa` ด้วย model `sonnet` โดยส่งให้แค่
+เมื่อ worker รายงานว่าเสร็จ ให้เรียก agent `model-foreman:qa` ด้วย model `sonnet` และ effort ตาม rubric โดยส่งให้แค่
 - brief ของ task
 - รายงานจาก worker
 
@@ -92,7 +94,7 @@ QA จะลองใช้งานจริง ลองกรณีขอบ 
 
 ## ขั้นที่ 7 — รีวิว
 
-เลือกโมเดลของ reviewer ตามตาราง "เลือกโมเดลของ reviewer" ใน rubric แล้วเรียก agent `model-foreman:reviewer` พร้อมระบุ model นั้น (context ใหม่ทุกครั้ง) โดยส่งให้แค่
+เลือกโมเดลของ reviewer ตามตาราง "เลือกโมเดลของ reviewer" ใน rubric แล้วเรียก agent `model-foreman:reviewer` พร้อมระบุ model และ effort ตาม rubric (context ใหม่ทุกครั้ง) โดยส่งให้แค่
 - brief ของ task
 - รายงานจาก worker
 - รายงานจาก QA (ถ้ามี)

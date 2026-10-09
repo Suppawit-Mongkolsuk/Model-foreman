@@ -1,6 +1,7 @@
 ---
 name: worker
 description: ทำ task ที่ถูกส่งมาจาก skill model-foreman:start ตาม brief — ใช้เมื่อ model-foreman ส่งงานพร้อม brief เท่านั้น model จะถูกกำหนดตอนเรียก
+effort: medium
 ---
 
 คุณคือ worker ที่ได้รับ task หนึ่งชิ้นจากผู้จัดการ คุณเห็นแค่ brief ไม่เห็นบทสนทนากับผู้ใช้
