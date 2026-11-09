@@ -118,7 +118,8 @@ plugin มี guard hook ที่บังคับให้ Claude Code ถา
 | ประเภท | ตัวอย่าง |
 |---|---|
 | ลบไฟล์ | `rm -rf`, `git clean -f`, `git checkout -- .` |
-| ทิ้งงาน / แก้ประวัติ | `git reset --hard`, `git branch -D` |
+| ทิ้งงาน / แก้ประวัติ | `git reset --hard`, `git branch -D`, `git stash` |
+| สร้าง commit | `git commit` (งานเก็บเป็น patch ให้คุณ commit เอง) |
 | ส่งออกนอกเครื่อง | `git push`, `npm publish`, deploy, `terraform apply`, `kubectl apply/delete` |
 | ฐานข้อมูล | `DROP TABLE`, `TRUNCATE`, `DELETE FROM`, migration |
 | สิทธิ์ระบบ | `sudo`, `chmod -R`, `chown -R` |
@@ -174,6 +175,8 @@ skills/
 │  └─ rubric.md       เกณฑ์ให้คะแนนและกฎบังคับ
 ├─ on/SKILL.md        เปิดโหมด Foreman
 └─ off/SKILL.md       ปิดโหมด Foreman
+scripts/
+└─ foreman-patch.sh   เก็บสิ่งที่แต่ละ task เปลี่ยนเป็น .patch โดยไม่แตะ git
 agents/
 ├─ worker.md          ตัวทำงาน
 ├─ qa.md              ตัวทดสอบการใช้งานจริง (Sonnet)
@@ -184,3 +187,25 @@ hooks/
 ├─ hooks.json         ลงทะเบียน guard
 └─ guard.sh           ตรวจคำสั่งอันตราย
 ```
+
+## ประวัติการแก้
+
+**0.6.0**
+- ไม่มี agent ตัวไหน commit: แต่ละ task เก็บสิ่งที่เปลี่ยนเป็น `.claude/foreman/patches/<run>-<task>.patch` ด้วย `scripts/foreman-patch.sh` และ guard ถามก่อน `git commit` / `git stash` ทุกครั้ง
+- reviewer อ่านจาก patch แทนการอ่านทั้งไฟล์
+- รีวิวรวมทั้งงานด้วย Opus ครั้งเดียวตอนจบ (`TASK: FINAL`) จับปัญหาข้าม task
+- task ที่แก้ไฟล์ซ้อนกันนับว่าขึ้นต่อกัน ทำทีละตัว (foreman-hud 0.6.0 ปฏิเสธถ้าซ้อนกับ worker ที่ยังทำอยู่)
+- บันทึกแผนลง `.claude/foreman/plan-<run>.md` ทำ run เดิมต่อข้าม session ได้
+- จบงานด้วยรายการไฟล์ ร่างข้อความ commit และคำสั่งย้อนทั้งงาน
+- ใช้คู่กับ foreman-hud 0.6.0 ขึ้นไป
+
+**0.5.0**
+- รายงานของ worker ใช้สถานะ `DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED / DISPUTE` และผล test แบบมีค่าตายตัวพร้อม output จริง
+- worker ถามก่อนเริ่มได้ (`NEEDS_CONTEXT`), self-review ก่อนส่ง, แย้ง feedback ที่ผิดได้ (`DISPUTE`), ทำ TDD เมื่อ brief สั่ง, รัน test เฉพาะส่วนของตัวเอง
+- QA ให้ระดับปัญหา `สูง / กลาง / ต่ำ`, ใช้ `visual-check` กับงาน UI และตอบ `ทดสอบไม่ได้` แทนการอ่านโค้ด
+- QA เจอปัญหาระดับกลางขึ้นไป → แก้ → QA ซ้ำ → แล้วค่อยรีวิว
+- ช่อง `ระดับรีวิว` ใน brief เป็นทั้งขั้นต่ำและเพดาน, Opus รีวิวเพราะ QA เฉพาะปัญหาระดับกลางขึ้นไป
+- กฎ Opus เสมอ แคบลงเหลือ auth, crypto, สิทธิ์ และจุดที่ข้อมูลข้ามเข้าระบบฝั่ง server (ฟอร์มฝั่ง frontend ใช้คะแนนปกติ)
+- brief มี run id, `TDD`, `อ่านเพิ่มได้ไม่เกิน` และ `QA เข้าระบบ` (อ่านจาก `.claude/foreman/qa-env.md`)
+- ตารางผูก skill ตามประเภทงาน และส่วน Red flags สำหรับผู้จัดการ
+- ใช้คู่กับ foreman-hud 0.5.0 ขึ้นไป

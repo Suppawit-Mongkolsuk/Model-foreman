@@ -27,6 +27,8 @@ if [ "$tool" = "Bash" ]; then
   check "$cmd" '(^|[;&|[:space:]])rm[[:space:]]+(-[a-zA-Z]*[rRf]|--recursive|--force)' 'ลบไฟล์แบบ recursive หรือ force'
   check "$cmd" '(^|[;&|[:space:]])sudo[[:space:]]' 'รันด้วยสิทธิ์ root (sudo)'
   check "$cmd" 'git[[:space:]]+push' 'push โค้ดขึ้น remote'
+  check "$cmd" 'git[[:space:]]+(-C[[:space:]]+[^[:space:]]+[[:space:]]+)?commit' 'สร้าง commit (model-foreman เก็บงานเป็น patch ผู้ใช้ commit เอง)'
+  check "$cmd" 'git[[:space:]]+(-C[[:space:]]+[^[:space:]]+[[:space:]]+)?stash' 'git stash ซ่อนงานที่ยังไม่ commit (รวมงานของ agent อื่น)'
   check "$cmd" 'git[[:space:]]+reset[[:space:]]+[^;&|]*--hard' 'git reset --hard ทิ้งงานที่ยังไม่ commit'
   check "$cmd" 'git[[:space:]]+clean[[:space:]]+[^;&|]*-[a-zA-Z]*f' 'git clean ลบไฟล์ที่ไม่ได้ track'
   check "$cmd" 'git[[:space:]]+branch[[:space:]]+[^;&|]*-D' 'ลบ branch แบบ force'
