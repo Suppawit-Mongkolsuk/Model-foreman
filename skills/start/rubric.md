@@ -79,6 +79,8 @@ QA ที่เจอแค่ปัญหาระดับ `ต่ำ` ไม�
 |---|---|---|
 | worker | Haiku หรือคะแนน 4–5 | medium |
 | worker | คะแนน 6 ขึ้นไป, Opus, หรือความเสี่ยงสูง | high |
+| investigator | Sonnet | medium |
+| investigator | Opus | high |
 | QA | ทั่วไป | medium |
 | QA | ความเสี่ยงสูง | high |
 | reviewer | Haiku (เช็กเร็ว) | low |

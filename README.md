@@ -179,6 +179,7 @@ scripts/
 └─ foreman-patch.sh   เก็บสิ่งที่แต่ละ task เปลี่ยนเป็น .patch โดยไม่แตะ git
 agents/
 ├─ worker.md          ตัวทำงาน
+├─ investigator.md    ตัวหาต้นเหตุบั๊ก อ่านอย่างเดียว (Sonnet / Opus)
 ├─ qa.md              ตัวทดสอบการใช้งานจริง (Sonnet)
 └─ reviewer.md        ตัวรีวิว (Haiku / Sonnet / Opus ตามความเสี่ยง)
 output-styles/
@@ -189,6 +190,12 @@ hooks/
 ```
 
 ## ประวัติการแก้
+
+**0.7.0**
+- งานแก้บั๊กที่ยังไม่รู้ต้นเหตุ แตกเป็น D-task (หาสาเหตุ) ก่อน task แก้ ด้วย agent ใหม่ `investigator` ที่อ่านอย่างเดียว
+- ผลของ D-task กลายเป็น brief ของ task แก้: ไฟล์ที่ต้องแก้, จุดต้นเหตุ, test ที่ต้องเขียน (TDD)
+- ต้นเหตุอยู่นอกขอบเขตที่ตกลงไว้ → หยุดถามผู้ใช้ก่อนเขียน task แก้
+- ใช้คู่กับ foreman-hud 0.7.0 ขึ้นไป
 
 **0.6.0**
 - ไม่มี agent ตัวไหน commit: แต่ละ task เก็บสิ่งที่เปลี่ยนเป็น `.claude/foreman/patches/<run>-<task>.patch` ด้วย `scripts/foreman-patch.sh` และ guard ถามก่อน `git commit` / `git stash` ทุกครั้ง
